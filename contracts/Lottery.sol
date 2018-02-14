@@ -1,4 +1,6 @@
 pragma solidity ^0.4.0;
+
+
 contract Lottery {
 
     address public manager;
@@ -13,13 +15,8 @@ contract Lottery {
         players.push(msg.sender);
     }
 
-    function random() private view returns (uint) {
-        return uint(keccak256(block.difficulty, now, players));
-    }
-
-    function pickWinner() public restricted {
-        uint index = random() % players.length;
-        players[index].transfer(this.balance);
+    function getPlayers() public view returns (address[]) {
+        return players;
     }
 
     modifier restricted() {
@@ -27,7 +24,12 @@ contract Lottery {
         _;
     }
 
-    function getPlayers() public view returns (address[]) {
-        return players;
+    function pickWinner() public restricted {
+        uint index = random() % players.length;
+        players[index].transfer(this.balance);
+    }
+
+    function random() private view returns (uint) {
+        return uint(keccak256(block.difficulty, now, players));
     }
 }
